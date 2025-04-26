@@ -1,7 +1,7 @@
 {
   "name": "xtemplatex",
   "version": "0.0.1",
-  "description": "Biblioteca de templates",
+  "description": "Biblioteca de templates PPTX e DOCX",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
@@ -16,15 +16,15 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ssgabrieldev/js-template.git"
+    "url": "git+https://github.com/ssgabrieldev/xtemplatex.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ssgabrieldev/js-template/issues"
+    "url": "https://github.com/ssgabrieldev/xtemplatex/issues"
   },
-  "homepage": "https://github.com/ssgabrieldev/js-template#readme",
+  "homepage": "https://github.com/ssgabrieldev/xtemplatex#readme",
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.5",
