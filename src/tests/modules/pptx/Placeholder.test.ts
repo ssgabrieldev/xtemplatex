@@ -79,7 +79,7 @@ describe("PPTXPlaceholder", () => {
       .toBe(expectedOutputXMLString.replace(/\s+/g, ""));
   });
 
-  it("should loop all lines of placeholder", () => {
+  it("should loop", () => {
     const openTag = "{#names}";
     const closeTag = "{/names}";
     const names = [
@@ -91,7 +91,7 @@ describe("PPTXPlaceholder", () => {
       <p:txBody>
         <a:p>
           <a:r>
-            <a:t>names: </a:t>
+            <a:t>names: ${names[0]}</a:t>
           </a:r>
         </a:p>
         <a:p>
@@ -101,12 +101,37 @@ describe("PPTXPlaceholder", () => {
         </a:p>
         <a:p>
           <a:r>
+            <a:t>teste</a:t>
+          </a:r>
+        </a:p>
+        <a:p>
+          <a:r>
+            <a:t>${names[1]}</a:t>
+          </a:r>
+        </a:p>
+        <a:p>
+          <a:r>
             <a:t>name: ${names[1]},</a:t>
           </a:r>
         </a:p>
         <a:p>
           <a:r>
+            <a:t>teste</a:t>
+          </a:r>
+        </a:p>
+        <a:p>
+          <a:r>
+            <a:t>${names[2]}</a:t>
+          </a:r>
+        </a:p>
+        <a:p>
+          <a:r>
             <a:t>name: ${names[2]},</a:t>
+          </a:r>
+        </a:p>
+        <a:p>
+          <a:r>
+            <a:t>teste</a:t>
           </a:r>
         </a:p>
         <a:p>
@@ -120,12 +145,17 @@ describe("PPTXPlaceholder", () => {
       <p:txBody>
         <a:p>
           <a:r>
-            <a:t>names: ${openTag}</a:t>
+            <a:t>names: ${openTag}{name}</a:t>
           </a:r>
         </a:p>
         <a:p>
           <a:r>
             <a:t>name: {name},</a:t>
+          </a:r>
+        </a:p>
+        <a:p>
+          <a:r>
+            <a:t>teste</a:t>
           </a:r>
         </a:p>
         <a:p>
@@ -137,7 +167,7 @@ describe("PPTXPlaceholder", () => {
     `.replaceAll(/\s*/g, ""), "application/xml");
     const textNodes = input.getElementsByTagName("a:t");
     const openNode = textNodes[0];
-    const closeNode = textNodes[2];
+    const closeNode = textNodes[3];
 
     const placeholder = new PPTXPlaceholder(
       openTag,

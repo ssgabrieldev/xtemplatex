@@ -80,7 +80,18 @@ export class PPTXPlaceholder extends Placeholder {
         .replace(new RegExp(`${this.closeTag}.*?</a:t>`), "</a:t>"),
       "application/xml"
     );
-    textBoxNode.insertBefore(paragraphToInsert, closeParagraphNode);
+
+    const textNodes = UtilsXml.getChildNodesByTag("a:t", paragraphToInsert);
+
+    for (let i = 0; i < textNodes.length; i++) {
+      const textNode = textNodes[i];
+
+      if (textNode.textContent) {
+        textBoxNode.insertBefore(paragraphToInsert, closeParagraphNode);
+
+        break;
+      }
+    }
   }
 
   private forEachParagraphs(callback: (paragraph: Node) => void) {
@@ -189,6 +200,11 @@ export class PPTXPlaceholder extends Placeholder {
     this.forEachParagraphs((paragraph) => {
       paragraphsClones.push(paragraph.cloneNode(true));
     });
+
+    const lastParagraph = paragraphsClones.pop();
+    if (lastParagraph) {
+      paragraphsClones.unshift(lastParagraph);
+    }
 
     data.forEach((_, index) => {
       const isLastData = index == data.length - 1;
