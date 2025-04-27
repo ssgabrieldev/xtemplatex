@@ -1,7 +1,11 @@
 import { FileHandler } from "../modules/file/FileHandler"
 
 export abstract class TemplateHandler {
-  abstract fileHandler: FileHandler;
+  private fileHandler: FileHandler;
+
+  constructor(path: string) {
+    this.fileHandler = new FileHandler(path);
+  }
 
   public abstract render(data: object): void;
   public abstract save(path: string): void;
