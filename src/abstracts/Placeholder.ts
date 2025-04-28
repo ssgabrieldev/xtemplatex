@@ -25,6 +25,8 @@ export abstract class Placeholder {
   protected abstract handleArray(data: any[]): void;
   protected abstract handleString(data: string): void;
 
+  protected abstract clean(): void;
+
   protected isOpenTag(tag: string): boolean {
     return !!tag.match(/^{#/);
   }
@@ -58,22 +60,6 @@ export abstract class Placeholder {
     child.parent = this;
 
     this.children.push(child);
-  }
-
-  public clean(): void {
-    const openTag = this.openTag;
-    const openNode = this.openNode;
-    const initialOpenTextContent = openNode.textContent;
-    if (initialOpenTextContent) {
-      openNode.textContent = initialOpenTextContent.replace(openTag, "");
-    }
-
-    const closeTag = this.closeTag;
-    const closeNode = this.closeNode;
-    const initialCloseTextContent = closeNode.textContent;
-    if (initialCloseTextContent) {
-      closeNode.textContent = initialCloseTextContent.replace(closeTag, "");
-    }
   }
 
   public render(data: any): void {
