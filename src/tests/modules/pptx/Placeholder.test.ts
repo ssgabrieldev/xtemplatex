@@ -38,7 +38,7 @@ describe("PPTXPlaceholder", () => {
       .toBe(expectedOutput.replace(/\s+/g, ""));
   });
 
-  it ("should loop inline placeholder", () => {
+  it("should loop inline placeholder", () => {
     const openTag = "{#names}";
     const closeTag = "{/names}";
     const names = [
@@ -168,7 +168,7 @@ describe("PPTXPlaceholder", () => {
     const textNodes = input.getElementsByTagName("a:t");
     const openNode = textNodes[0];
     const closeNode = textNodes[3];
-  
+
     const placeholder = new PPTXPlaceholder(
       openTag,
       closeTag,
@@ -176,12 +176,12 @@ describe("PPTXPlaceholder", () => {
       closeNode,
       {} as PPTXSlide
     );
-  
+
     placeholder.render(names);
-  
+
     const actualInput = UtilsXml.serializer.serializeToString(input);
     const expectedOutput = UtilsXml.serializer.serializeToString(output);
-  
+
     expect(actualInput.replace(/\s+/g, ""))
       .toBe(expectedOutput.replace(/\s+/g, ""));
   });
@@ -250,6 +250,65 @@ describe("PPTXPlaceholder", () => {
     const textNodes = input.getElementsByTagName("a:t");
     const openNode = textNodes[0];
     const closeNode = textNodes[4];
+    const placeholder = new PPTXPlaceholder(
+      openTag,
+      closeTag,
+      openNode,
+      closeNode,
+      {} as PPTXSlide
+    );
+
+    placeholder.render(names);
+
+    const actualInput = UtilsXml.serializer.serializeToString(input);
+    const expectedOutput = UtilsXml.serializer.serializeToString(output);
+
+    expect(actualInput)
+      .toBe(expectedOutput);
+  });
+
+  it("should loop inline loop with multiple styles", () => {
+    const openTag = "{#names}";
+    const closeTag = "{/names}";
+    const names = [
+      "name1",
+      "name2",
+      "name3",
+    ];
+    const output = UtilsXml.parser.parseFromString(`
+      <p:txBody>
+        <a:p>
+          <a:r>
+            <a:t>${names[0]}</a:t>
+          </a:r>
+          <a:r>
+            <a:t>${names[1]}</a:t>
+          </a:r>
+          <a:r>
+            <a:t>${names[2]}</a:t>
+          </a:r>
+        </a:p>
+      </p:txBody>
+    `.replaceAll(/\s+/g, ""));
+    const input = UtilsXml.parser.parseFromString(`
+      <p:txBody>
+        <a:p>
+          <a:r>
+            <a:t>${openTag}</a:t>
+          </a:r>
+          <a:r>
+            <a:t>{name}</a:t>
+          </a:r>
+          <a:r>
+            <a:t>${closeTag}</a:t>
+          </a:r>
+        </a:p>
+      </p:txBody>
+    `.replace(/\s+/g, ""));
+
+    const textNodes = input.getElementsByTagName("a:t");
+    const openNode = textNodes[0];
+    const closeNode = textNodes[2];
     const placeholder = new PPTXPlaceholder(
       openTag,
       closeTag,
