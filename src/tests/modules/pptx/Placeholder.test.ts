@@ -285,7 +285,7 @@ describe("PPTXPlaceholder", () => {
       .toBe(expectedOutput);
   });
 
-  it("should loop inline loop with multiple styles", () => {
+  it("should loop inline loop with multiple rows", () => {
     const openTag = "{#names}";
     const closeTag = "{/names}";
     const names = [
