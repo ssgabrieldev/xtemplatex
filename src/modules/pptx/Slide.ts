@@ -20,13 +20,15 @@ export class PPTXSlide {
     rel: PPTXRel,
     templateHandler: PPTXTemplateHandler,
   ) {
-    this.number = number;
     this.doc = doc;
-    this.originalDoc = doc.cloneNode(true) as Document;
-    this.rel = rel
+    this.rel = rel;
+    this.number = number;
     this.templateHandler = templateHandler;
+    this.originalDoc = doc.cloneNode(true) as Document;
     this.id = this.rel.getID(this.number);
     this.rID = this.rel.getRID(this.number);
+
+    this.getPlaceholders();
   }
 
   private getPlaceholders(): PPTXPlaceholder[] {
@@ -38,6 +40,5 @@ export class PPTXSlide {
   }
 
   public render(data: object): void {
-
   }
 }
