@@ -195,10 +195,9 @@ export class PPTXPlaceholder extends Placeholder {
         const textContent = textNode.textContent;
 
         if (textContent) {
-          const matchs = textContent.matchAll(/{.*?}/g);
+          const tags = UtilsPlaceholder.extractTags(textContent);
 
-          for (const match of matchs) {
-            const [tag] = match;
+          tags.forEach((tag) => {
             const isOpenTag = UtilsPlaceholder.isOpenTag(tag);
             const isCloseTag = UtilsPlaceholder.isCloseTag(tag);
 
@@ -207,18 +206,18 @@ export class PPTXPlaceholder extends Placeholder {
 
             if (isOpenTag) {
               if (openNode == textNode) {
-                continue;
+                return;
               }
 
               currentChildOpenTags.push(tag);
               currentChildOpenNodes.push(textNode);
 
-              continue;
+              return;
             }
 
             if (isCloseTag) {
               if (closeNode == textNode) {
-                continue;
+                return;
               }
 
               const openTag = currentChildOpenTags.pop();
@@ -237,7 +236,7 @@ export class PPTXPlaceholder extends Placeholder {
                 this.appendChild(child);
               }
 
-              continue;
+              return;
             }
 
             if (!hasPlaceholdersOpens) {
@@ -250,7 +249,7 @@ export class PPTXPlaceholder extends Placeholder {
               );
               this.appendChild(child);
             }
-          }
+          });
         }
       }
     });

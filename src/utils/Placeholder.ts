@@ -7,10 +7,15 @@ export class UtilsPlaceholder {
     return !!tag.match(/^{\//);
   }
 
-  static extractTags(text: string): RegExpStringIterator<RegExpExecArray> {
+  static extractTags(text: string): string[] {
     const matchs = text.matchAll(/{.*?}/g);
+    const tags = Array.from(matchs).map((match) => {
+      const [tag] = match;
 
-    return matchs;
+      return tag;
+    });
+
+    return tags;
   }
 
   static getKeyFromTag(tag: string): string {
