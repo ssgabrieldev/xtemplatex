@@ -188,70 +188,71 @@ export class PPTXPlaceholder extends Placeholder {
     const currentChildOpenNodes: Node[] = [];
 
     this.forEachParagraphs((paragraph) => {
-      const textNodes = UtilsXml.getChildNodesByTag("a:t", paragraph);
+      UtilsPlaceholder.forEachNodeWithPlaceholder(paragraph, "a:t", (textNode, tag) => {
+        const isOpenTag = UtilsPlaceholder.isOpenTag(tag);
+        const isCloseTag = UtilsPlaceholder.isCloseTag(tag);
 
-      for (let i = 0; i < textNodes.length; i++) {
-        const textNode = textNodes[i];
-        const textContent = textNode.textContent;
+        let hasPlaceholdersOpens = currentChildOpenTags.length > 0
 
-        if (textContent) {
-          const tags = UtilsPlaceholder.extractTags(textContent);
+        if (isOpenTag) {
+          if (openNode == textNode) {
+            return;
+          }
 
-          tags.forEach((tag) => {
-            const isOpenTag = UtilsPlaceholder.isOpenTag(tag);
-            const isCloseTag = UtilsPlaceholder.isCloseTag(tag);
+          currentChildOpenTags.push(tag);
+          currentChildOpenNodes.push(textNode);
 
-            let hasPlaceholdersOpens = currentChildOpenTags.length > 0
-              && currentChildOpenNodes.length > 0;
-
-            if (isOpenTag) {
-              if (openNode == textNode) {
-                return;
-              }
-
-              currentChildOpenTags.push(tag);
-              currentChildOpenNodes.push(textNode);
-
-              return;
-            }
-
-            if (isCloseTag) {
-              if (closeNode == textNode) {
-                return;
-              }
-
-              const openTag = currentChildOpenTags.pop();
-              const currentChildOpenNode = currentChildOpenNodes.pop();
-
-              hasPlaceholdersOpens = currentChildOpenTags.length > 0
-
-              if (!hasPlaceholdersOpens && openTag && currentChildOpenNode) {
-                const child = new PPTXPlaceholder(
-                  openTag,
-                  tag,
-                  currentChildOpenNode,
-                  textNode,
-                  this.slide
-                );
-                this.appendChild(child);
-              }
-
-              return;
-            }
-
-            if (!hasPlaceholdersOpens) {
-              const child = new PPTXPlaceholder(
-                tag,
-                tag,
-                textNode,
-                textNode,
-                this.slide
-              );
-              this.appendChild(child);
-            }
-          });
+          return;
         }
-      }
+
+        if (isCloseTag) {
+          if (closeNode == textNode) {
+            return;
+          }
+
+          const openTag = currentChildOpenTags.pop();
+          const currentChildOpenNode = currentChildOpenNodes.pop();
+
+          hasPlaceholdersOpens = currentChildOpenTags.length > 0
+
+          if (!hasPlaceholdersOpens && openTag && currentChildOpenNode) {
+            const child = new PPTXPlaceholder(
+              openTag,
+              tag,
+              currentChildOpenNode,
+              textNode,
+              this.slide
+            );
+            this.appendChild(child);
+          }
+
+          return;
+        }
+
+        if (!hasPlaceholdersOpens) {
+          const child = new PPTXPlaceholder(
+            tag,
+            tag,
+            textNode,
+            textNode,
+            this.slide
+          );
+          this.appendChild(child);
+        }
+      });
+      // const textNodes = UtilsXml.getChildNodesByTag("a:t", paragraph);
+      //
+      // for (let i = 0; i < textNodes.length; i++) {
+      //   const textNode = textNodes[i];
+      //   const textContent = textNode.textContent;
+      //
+      //   if (textContent) {
+      //     const tags = UtilsPlaceholder.extractTags(textContent);
+      //
+      //     tags.forEach((tag) => {
+      //     });
+      //   }
+      // }
     });
 
     return children;

@@ -18,7 +18,9 @@ describe("PPTX Slide", () => {
             </a:p>
             <a:p>
               <a:r>
-                <a:t>{placeholder2} Pos txt</a:t>
+                <a:t>
+                  {placeholder2} Pos txt
+                </a:t>
               </a:r>
             </a:p>
           </p:txBody>
@@ -53,8 +55,6 @@ describe("PPTX Slide", () => {
       rel,
       templateHandler
     );
-
-    (slide as any).getPlaceholders();
 
     expect((slide as any).placeholders.length)
       .toBe(3);

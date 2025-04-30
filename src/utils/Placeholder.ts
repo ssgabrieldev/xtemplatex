@@ -1,3 +1,5 @@
+import { UtilsXml } from "./Xml";
+
 export class UtilsPlaceholder {
   static isOpenTag(tag: string): boolean {
     return !!tag.match(/^{#/);
@@ -37,5 +39,26 @@ export class UtilsPlaceholder {
     return tag
       .replace(/^{/, "")
       .replace(/}$/, "");
+  }
+
+  static forEachNodeWithPlaceholder(
+    root: Node,
+    nodeTagWithPlaceholder: string,
+    callback: (node: Node, tag: string) => void
+  ): void {
+    const textNodes = UtilsXml.getChildNodesByTag(nodeTagWithPlaceholder, root);
+
+    for (let i = 0; i < textNodes.length; i++) {
+      const textNode = textNodes[i];
+      const textContent = textNode.textContent;
+
+      if (textContent) {
+        const tags = UtilsPlaceholder.extractTags(textContent);
+
+        for (const tag of tags) {
+          callback(textNode, tag);
+        }
+      }
+    }
   }
 }
