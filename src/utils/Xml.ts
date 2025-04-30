@@ -4,7 +4,7 @@ export class UtilsXml {
   static parser = new DOMParser();
   static serializer = new XMLSerializer();
 
-  static getParentNodeByTag(tag: string, node: Node): Node | null {
+  static getParentNodeByTag(tag: string, node: Node): Node {
     let current: Node | null = node;
 
     while (current) {
@@ -15,7 +15,7 @@ export class UtilsXml {
       current = current.parentNode;
     }
 
-    return null;
+    return new Node();
   }
 
   static getChildNodesByTag(tag: string, node: Node) {

@@ -40,7 +40,7 @@ export class PPTXPlaceholder extends Placeholder {
     const initialOpenTextContent = openNode.textContent;
 
     if (initialOpenTextContent) {
-      const openParagraphNode = this.getParagraph(openNode) || new Element();
+      const openParagraphNode = this.getParagraph(openNode);
       const openRowNode = openNode.parentNode;
       const newTextContent = initialOpenTextContent.replace(openTag, "");
 
@@ -60,7 +60,7 @@ export class PPTXPlaceholder extends Placeholder {
     const initialCloseTextContent = closeNode.textContent;
 
     if (initialCloseTextContent) {
-      const closeParagraphNode = this.getParagraph(closeNode) || new Element();
+      const closeParagraphNode = this.getParagraph(closeNode);
       const newTextContent = initialCloseTextContent.replace(closeTag, "");
       const closeRowNode = closeNode.parentNode;
 
@@ -81,22 +81,28 @@ export class PPTXPlaceholder extends Placeholder {
     const closeNode = this.closeNode;
 
     if (openNode == closeNode) {
-      const textContent = paragraph.textContent || "";
-      const match = textContent.match(new RegExp(`${this.openTag}.*?${this.closeTag}`)) || [""];
+      const textContent = paragraph.textContent;
 
-      let [content] = match;
-      content = content
-        .replace(this.openTag, "");
+      if (textContent) {
+        const match = textContent.match(new RegExp(`${this.openTag}.*?${this.closeTag}`));
+        if (match) {
+          let [content] = match;
+          content = content
+            .replace(this.openTag, "");
 
-      const openNodeTextContent = openNode.textContent || "";
+          const openNodeTextContent = openNode.textContent;
 
-      openNode.textContent = openNodeTextContent.replace(this.closeTag, content);
+          if (openNodeTextContent) {
+            openNode.textContent = openNodeTextContent.replace(this.closeTag, content);
+          }
+        }
+      }
 
       return;
     }
 
-    const openParagraphNode = this.getParagraph(openNode) || new Element();
-    const closeParagraphNode = this.getParagraph(closeNode) || new Element();
+    const openParagraphNode = this.getParagraph(openNode);
+    const closeParagraphNode = this.getParagraph(closeNode);
 
     if (openParagraphNode == closeParagraphNode) {
       const xmlString = UtilsXml.serializer.serializeToString(paragraph);
@@ -131,7 +137,7 @@ export class PPTXPlaceholder extends Placeholder {
       return;
     }
 
-    const textBoxNode = UtilsXml.getParentNodeByTag("p:txBody", closeParagraphNode) || new Element();
+    const textBoxNode = UtilsXml.getParentNodeByTag("p:txBody", closeParagraphNode);
     const xmlString = UtilsXml.serializer.serializeToString(paragraph);
     const paragraphToInsert = UtilsXml.parser.parseFromString(
       xmlString
@@ -159,7 +165,7 @@ export class PPTXPlaceholder extends Placeholder {
     const openParagraphNode = this.getParagraph(openNode);
     const closeParagraphNode = this.getParagraph(closeNode);
 
-    let currentParagraphNode = openParagraphNode;
+    let currentParagraphNode: Node | null = openParagraphNode;
 
     while (currentParagraphNode) {
       callback(currentParagraphNode);
@@ -172,7 +178,7 @@ export class PPTXPlaceholder extends Placeholder {
     }
   }
 
-  public getChildren(): Placeholder[] {
+  protected getChildren(): Placeholder[] {
     const children = this.children;
     const openNode = this.openNode;
     const closeNode = this.closeNode;
@@ -185,62 +191,64 @@ export class PPTXPlaceholder extends Placeholder {
 
       for (let i = 0; i < textNodes.length; i++) {
         const textNode = textNodes[i];
-        const textContent = textNode.textContent || "";
-        const matchs = textContent.matchAll(/{.*?}/g);
+        const textContent = textNode.textContent;
 
-        for (const match of matchs) {
-          const [tag] = match;
-          const isOpenTag = this.isOpenTag(tag);
-          const isCloseTag = this.isCloseTag(tag);
+        if (textContent) {
+          const matchs = textContent.matchAll(/{.*?}/g);
 
-          let hasPlaceholdersOpens = currentChildOpenTags.length > 0
-            && currentChildOpenNodes.length > 0;
+          for (const match of matchs) {
+            const [tag] = match;
+            const isOpenTag = this.isOpenTag(tag);
+            const isCloseTag = this.isCloseTag(tag);
 
-          if (isOpenTag) {
-            if (openNode == textNode) {
-              continue;
-            }
-
-            currentChildOpenTags.push(tag);
-            currentChildOpenNodes.push(textNode);
-
-            continue;
-          }
-
-          if (isCloseTag) {
-            if (closeNode == textNode) {
-              continue;
-            }
-
-            const openTag = currentChildOpenTags.pop();
-            const currentChildOpenNode = currentChildOpenNodes.pop();
-
-            hasPlaceholdersOpens = currentChildOpenTags.length > 0
+            let hasPlaceholdersOpens = currentChildOpenTags.length > 0
               && currentChildOpenNodes.length > 0;
 
-            if (!hasPlaceholdersOpens && openTag && currentChildOpenNode) {
+            if (isOpenTag) {
+              if (openNode == textNode) {
+                continue;
+              }
+
+              currentChildOpenTags.push(tag);
+              currentChildOpenNodes.push(textNode);
+
+              continue;
+            }
+
+            if (isCloseTag) {
+              if (closeNode == textNode) {
+                continue;
+              }
+
+              const openTag = currentChildOpenTags.pop();
+              const currentChildOpenNode = currentChildOpenNodes.pop();
+
+              hasPlaceholdersOpens = currentChildOpenTags.length > 0
+
+              if (!hasPlaceholdersOpens && openTag && currentChildOpenNode) {
+                const child = new PPTXPlaceholder(
+                  openTag,
+                  tag,
+                  currentChildOpenNode,
+                  textNode,
+                  this.slide
+                );
+                this.appendChild(child);
+              }
+
+              continue;
+            }
+
+            if (!hasPlaceholdersOpens) {
               const child = new PPTXPlaceholder(
-                openTag,
                 tag,
-                currentChildOpenNode,
+                tag,
+                textNode,
                 textNode,
                 this.slide
               );
               this.appendChild(child);
             }
-
-            continue;
-          }
-
-          if (!hasPlaceholdersOpens) {
-            const child = new PPTXPlaceholder(
-              tag,
-              tag,
-              textNode,
-              textNode,
-              this.slide
-            );
-            this.appendChild(child);
           }
         }
       }
