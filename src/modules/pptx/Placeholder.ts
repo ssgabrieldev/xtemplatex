@@ -1,4 +1,5 @@
 import { Placeholder } from "../../abstracts/Placeholder";
+import { UtilsPlaceholder } from "../../utils/Placeholder";
 import { UtilsXml } from "../../utils/Xml";
 import { PPTXSlide } from "./Slide";
 
@@ -198,8 +199,8 @@ export class PPTXPlaceholder extends Placeholder {
 
           for (const match of matchs) {
             const [tag] = match;
-            const isOpenTag = this.isOpenTag(tag);
-            const isCloseTag = this.isCloseTag(tag);
+            const isOpenTag = UtilsPlaceholder.isOpenTag(tag);
+            const isCloseTag = UtilsPlaceholder.isCloseTag(tag);
 
             let hasPlaceholdersOpens = currentChildOpenTags.length > 0
               && currentChildOpenNodes.length > 0;
