@@ -1,7 +1,8 @@
 import { UtilsPlaceholder } from "../utils/Placeholder";
 
 export abstract class Placeholder {
-  protected key: string;
+  public key: string;
+
   protected openTag: string;
   protected closeTag: string;
   protected openNode: Node;

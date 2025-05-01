@@ -91,6 +91,11 @@ export class PPTXSlide {
     return this;
   }
 
-  public render(data: object): void {
+  public render(data: {[key: string]: any}): void {
+    const placeholders = this.placeholders;
+
+    placeholders.forEach((placeholder) => {
+      placeholder.render(data[placeholder.key]);
+    });
   }
 }
