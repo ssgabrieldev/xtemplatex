@@ -6,7 +6,7 @@ export class PPTXTemplateHandler extends TemplateHandler {
   private slides: PPTXSlide[] = [];
 
   private getSlides(): PPTXSlide[] {
-
+    return []
   }
 
   public addSlide(slide: PPTXSlide): void {
